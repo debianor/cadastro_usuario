@@ -1,0 +1,18 @@
+import mysql.connector
+
+
+mydb = mysql.connector.connect(
+  host="127.0.0.1",
+  user="root",
+  passwd=""
+)
+if mydb.is_connected():
+    print('Conectado com sucesso')
+else:
+    print("NÃO FOI POSSIVEL CONECTAR AO BANCO DE DADOS !! VERIFIQUE XAAMP E MYSQL ")
+
+#Executa as linhas no SQL
+#mycursor = mydb.cursor()
+
+#Finaliza e mostra
+#myresult = mycursor.fetchall()
