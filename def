@@ -1,0 +1,110 @@
+import mysql.connector
+from conecta_db import mydb
+cadastro = {}
+programa = []
+mycursor = mydb.cursor()
+
+mycursor.execute('create database if not exists Cadastro_Usuario')
+mycursor.execute('use Cadastro_Usuario')
+mycursor.execute('create table if not exists usuarios  (id int primary key auto_increment, '
+                 'nome varchar(30) not null, idade int(3) not null)'
+                 )
+
+#myresult = mycursor.fetchall()
+#print(myresult)
+
+def menu():
+    try:
+        opc = int(input(''' 
+        ===Cadastramento 1.0===
+            1- Cadastrar 
+            2- Alterar Idade
+            3- Alterar Nome
+            4- Exibir Lista
+            0- Sair
+        Digite a opção desejada: ''') or 0)
+
+        if opc in range(0,5):
+            return opc
+        else:
+            print("Digite uma Opção Valida !")
+            menu()
+    except ValueError as erro:
+        print('          Digite Apenas Números')
+
+
+
+def cadastrar():
+    print()
+    nome = input('Digite seu nome: '.title().strip())
+    idade = int(input('Digite sua idade: '.title().strip()))
+    sql = "INSERT INTO usuarios (nome, idade) VALUES (%s, %s)"
+    val = (nome, idade)
+    mycursor.execute(sql, val)
+    mydb.commit()
+    #cadastro['nome'] = input('Digite seu nome: '.title().strip())
+    #cadastro['idade'] = int(input('Digite sua idade: '.title().strip()))
+    #programa.append(cadastro.copy())
+    #print(f'O Nome {cadastro["nome"]} e Idade {cadastro["idade"]} foram Cadastrados com Sucesso !')
+
+def alterar_idade():
+    # for k, v in enumerate(programa):
+    #     print(v)
+    exibir_lista()
+    pergunta = int(input('Qual o ID da pessoa que você deseja alterar a idade: '.strip().title()))
+    nova_idade = int(input('Qual a nova idade: '.strip()))
+    mycursor.execute(f'update usuarios  SET idade = {nova_idade} WHERE id = {pergunta};')
+    mydb.commit()
+    mycursor.execute(f'select * from usuarios where id = {pergunta};')
+    print()
+    print('=ID  Nome  Idade=')
+    myresult = mycursor.fetchall()
+    print(myresult)
+
+    # for v in programa:
+    #     if v['nome'] == pergunta:
+    #         print()
+    #         nova_idade = int(input('Qual a nova idade: '.strip()))
+    #         v['idade'] = nova_idade
+    #         print(f'A nova idade de {v["nome"]} é {v["idade"]} anos de idade !')
+
+def alterar_nome():
+    exibir_lista()
+    pergunta_nome = int(input('Qual o ID da pessoa que você deseja alterar o nome: '.strip().title()))
+    novo_nome = str(input('Qual o novo nome: '.strip()))
+    sql = "UPDATE usuarios SET nome = %s WHERE id = %s"
+    val = (novo_nome, pergunta_nome)
+    mycursor.execute(sql, val)
+    mycursor.execute(f'select * from usuarios where id = {pergunta_nome};')
+    print()
+    print('=ID  Nome  Idade=')
+    myresult = mycursor.fetchall()
+    print(myresult)
+
+
+    # for k, v in enumerate(programa):
+    #     print(v)
+    # pergunta = input('Qual o nome da pessoa que você deseja alterar: '.strip().title())
+    # for v in programa:
+    #     if v['nome'] == pergunta:
+    #         print()
+    #         novo_nome = input('Qual o novo nome: '.strip())
+    #         v['nome'] = novo_nome
+    #         print(f'O novo nome é {v["nome"]} !')
+
+def exibir_lista():
+    print()
+    print('ID  Nome  Idade')
+    mycursor.execute('select * from usuarios')
+    myresult = mycursor.fetchall()
+    for x in myresult:
+        print(x)
+
+    #print(myresult)
+
+    # print('=' * 30)
+    # print(f'{"Nome":>10} {"Idade":>10}')
+    # for k, v in enumerate(programa):
+    #     print(f'{v["nome"]:>8} {v["idade"]:>8}')
+    # print('=' * 30)
+
